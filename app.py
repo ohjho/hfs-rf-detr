@@ -51,7 +51,7 @@ create_directory(directory_path=VIDEO_TARGET_DIRECTORY)
 def detect_and_annotate(
         model: RFDETR,
         image: ImageType,
-        confidence: float
+        confidence: float,
 ) -> ImageType:
     detections = model.predict(image, threshold=confidence)
 
@@ -67,15 +67,23 @@ def detect_and_annotate(
     )
 
     labels = [
-        f"{COCO_CLASSES[class_id]} {confidence:.2f}"
+ f"{COCO_CLASSES[class_id]} {confidence:.2f}"
         for class_id, confidence
         in zip(detections.class_id, detections.confidence)
     ]
 
+    detection_results = []
+    for i in range(len(detections.class_id)):
+        detection_results.append({
+ "class_id": detections.class_id[i],
+ "classname": COCO_CLASSES[detections.class_id[i]],
+ "confidence": detections.confidence[i],
+ "bounding_box": detections.xyxy[i].tolist()
+        })
     annotated_image = image.copy()
     annotated_image = bbox_annotator.annotate(annotated_image, detections)
     annotated_image = label_annotator.annotate(annotated_image, detections, labels)
-    return annotated_image
+ return annotated_image, detection_results
 
 
 def load_model(resolution: int, checkpoint: str) -> RFDETR:
@@ -91,7 +99,7 @@ def image_processing_inference(
         confidence: float,
         resolution: int,
         checkpoint: str
-):
+) -> Image.Image:
     model = load_model(resolution=resolution, checkpoint=checkpoint)
     return detect_and_annotate(model=model, image=input_image, confidence=confidence)
 
