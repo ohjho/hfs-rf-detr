@@ -1,4 +1,4 @@
-import os
+import os, spaces
 from typing import TypeVar
 
 from tqdm import tqdm
@@ -31,7 +31,10 @@ IMAGE_PROCESSING_EXAMPLES = [
     ['https://media.roboflow.com/supervision/image-examples/vehicles.png', 0.3, 728, "large"],
     ['https://media.roboflow.com/notebooks/examples/dog-2.jpeg', 0.5, 560, "base"],
 ]
-VIDEO_PROCESSING_EXAMPLES = [["https://media.roboflow.com/supervision/video-examples/people-walking.mp4", 0.3, 728, "large"], ["https://media.roboflow.com/supervision/video-examples/vehicles.mp4", 0.3, 728, "large"]]
+VIDEO_PROCESSING_EXAMPLES = [
+    ["https://huggingface.co/spaces/SkalskiP/RF-DETR/resolve/main/videos/people-walking.mp4", 0.3, 728, "large"], 
+    ["https://huggingface.co/spaces/SkalskiP/RF-DETR/resolve/main/videos/vehicles.mp4", 0.3, 728, "large"]
+    ]
 
 
 COLOR = sv.ColorPalette.from_hex([
@@ -45,7 +48,7 @@ VIDEO_TARGET_DIRECTORY = "tmp"
 
 create_directory(directory_path=VIDEO_TARGET_DIRECTORY)
 
-
+#@spaces.GPU
 def detect_and_annotate(
         model: RFDETR,
         image: ImageType,
@@ -81,7 +84,8 @@ def detect_and_annotate(
     annotated_image = image.copy()
     annotated_image = bbox_annotator.annotate(annotated_image, detections)
     annotated_image = label_annotator.annotate(annotated_image, detections, labels)
-    return annotated_image, detection_results
+    return {'annotated_image': annotated_image, 
+        'results': detection_results}
 
 
 def load_model(resolution: int, checkpoint: str) -> RFDETR:
@@ -99,7 +103,7 @@ def image_processing_inference(
         checkpoint: str
 ) -> Image.Image:
     model = load_model(resolution=resolution, checkpoint=checkpoint)
-    return detect_and_annotate(model=model, image=input_image, confidence=confidence)
+    return detect_and_annotate(model=model, image=input_image, confidence=confidence)['annotated_image']
 
 
 def video_processing_inference(
@@ -127,7 +131,7 @@ def video_processing_inference(
                 model=model,
                 image=frame,
                 confidence=confidence
-            )
+            )['annotated_image']
             annotated_frame = sv.scale_image(annotated_frame, VIDEO_SCALE_FACTOR)
             sink.write_frame(annotated_frame)
 
