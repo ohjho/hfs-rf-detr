@@ -1,4 +1,5 @@
-gradio
+gradio==5.23.2
+pydantic==2.10.6
 spaces
-rfdetr
+rfdetr~=1.10
 tqdm

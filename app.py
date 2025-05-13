@@ -48,7 +48,7 @@ VIDEO_TARGET_DIRECTORY = "tmp"
 
 create_directory(directory_path=VIDEO_TARGET_DIRECTORY)
 
-#@spaces.GPU
+@spaces.GPU
 def detect_and_annotate(
         model: RFDETR,
         image: ImageType,
