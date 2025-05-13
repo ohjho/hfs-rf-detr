@@ -88,6 +88,8 @@ def detect_and_annotate(
 
 @spaces.GPU
 def load_model(resolution: int, checkpoint: str) -> RFDETR:
+    # Huggingface Zero-GPU has to use .to(device) to set the device, otherwise it will fail
+    # ref: https://huggingface.co/spaces/zero-gpu-explorers/README/discussions/72#669ffc12b3b73c95ecd9c246
     if checkpoint == "base":
         return RFDETRBase(resolution=resolution, device = "cpu")
     elif checkpoint == "large":
@@ -102,9 +104,14 @@ def image_processing_inference(
         checkpoint: str
 ) -> Image.Image:
     model = load_model(resolution=resolution, checkpoint=checkpoint)
+
+    # Huggingface Zero-GPU has to use .to(device) to set the device, otherwise it will fail
+    # ref: https://huggingface.co/spaces/zero-gpu-explorers/README/discussions/72#669ffc12b3b73c95ecd9c246
     model.model.model.to('cuda')
     model.model.device = 'cuda'
-    return detect_and_annotate(model=model, image=input_image, confidence=confidence)['annotated_image']
+
+    r = detect_and_annotate(model=model, image=input_image, confidence=confidence)
+    return r['annotated_image'], r['results']
 
 
 def video_processing_inference(
@@ -200,7 +207,10 @@ with gr.Blocks() as demo:
                 image_processing_resolution_slider,
                 image_processing_checkpoint_dropdown
             ],
-            outputs=image_processing_output_image,
+            outputs=[
+               image_processing_output_image,
+               gr.JSON(label="Results", visible = False) 
+            ],
         )
     # with gr.Tab("Video"):
     #     with gr.Row():
