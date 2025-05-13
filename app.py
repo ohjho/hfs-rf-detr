@@ -102,7 +102,7 @@ def image_processing_inference(
         checkpoint: str
 ) -> Image.Image:
     model = load_model(resolution=resolution, checkpoint=checkpoint)
-    model.model.to('cuda')
+    model.model.model.to('cuda')
     model.model.device = 'cuda'
     return detect_and_annotate(model=model, image=input_image, confidence=confidence)['annotated_image']
 
