@@ -201,62 +201,62 @@ with gr.Blocks() as demo:
             ],
             outputs=image_processing_output_image,
         )
-    with gr.Tab("Video"):
-        with gr.Row():
-            video_processing_input_video = gr.Video(
-                label='Upload video',
-                height=600
-            )
-            video_processing_output_video = gr.Video(
-                label='Output video',
-                height=600
-            )
-        with gr.Row():
-            with gr.Column():
-                video_processing_confidence_slider = gr.Slider(
-                    label="Confidence",
-                    minimum=0.0,
-                    maximum=1.0,
-                    step=0.05,
-                    value=0.5,
-                )
-                video_processing_resolution_slider = gr.Slider(
-                    label="Inference resolution",
-                    minimum=560,
-                    maximum=1120,
-                    step=56,
-                    value=728,
-                )
-                video_processing_checkpoint_dropdown = gr.Dropdown(
-                    label="Checkpoint",
-                    choices=["base", "large"],
-                    value="base"
-                )
-            with gr.Column():
-                video_processing_submit_button = gr.Button("Submit", value="primary")
+    # with gr.Tab("Video"):
+    #     with gr.Row():
+    #         video_processing_input_video = gr.Video(
+    #             label='Upload video',
+    #             height=600
+    #         )
+    #         video_processing_output_video = gr.Video(
+    #             label='Output video',
+    #             height=600
+    #         )
+    #     with gr.Row():
+    #         with gr.Column():
+    #             video_processing_confidence_slider = gr.Slider(
+    #                 label="Confidence",
+    #                 minimum=0.0,
+    #                 maximum=1.0,
+    #                 step=0.05,
+    #                 value=0.5,
+    #             )
+    #             video_processing_resolution_slider = gr.Slider(
+    #                 label="Inference resolution",
+    #                 minimum=560,
+    #                 maximum=1120,
+    #                 step=56,
+    #                 value=728,
+    #             )
+    #             video_processing_checkpoint_dropdown = gr.Dropdown(
+    #                 label="Checkpoint",
+    #                 choices=["base", "large"],
+    #                 value="base"
+    #             )
+    #         with gr.Column():
+    #             video_processing_submit_button = gr.Button("Submit", value="primary")
 
-        gr.Examples(
-            fn=video_processing_inference,
-            examples=VIDEO_PROCESSING_EXAMPLES,
-            inputs=[
-                video_processing_input_video,
-                video_processing_confidence_slider,
-                video_processing_resolution_slider,
-                video_processing_checkpoint_dropdown
-            ],
-            outputs=video_processing_output_video,
-            run_on_click=True
-        )
+    #     gr.Examples(
+    #         fn=video_processing_inference,
+    #         examples=VIDEO_PROCESSING_EXAMPLES,
+    #         inputs=[
+    #             video_processing_input_video,
+    #             video_processing_confidence_slider,
+    #             video_processing_resolution_slider,
+    #             video_processing_checkpoint_dropdown
+    #         ],
+    #         outputs=video_processing_output_video,
+    #         run_on_click=True
+    #     )
 
-        video_processing_submit_button.click(
-            video_processing_inference,
-            inputs=[
-                video_processing_input_video,
-                video_processing_confidence_slider,
-                video_processing_resolution_slider,
-                video_processing_checkpoint_dropdown
-            ],
-            outputs=video_processing_output_video
-        )
+    #     video_processing_submit_button.click(
+    #         video_processing_inference,
+    #         inputs=[
+    #             video_processing_input_video,
+    #             video_processing_confidence_slider,
+    #             video_processing_resolution_slider,
+    #             video_processing_checkpoint_dropdown
+    #         ],
+    #         outputs=video_processing_output_video
+    #     )
 
 demo.launch(debug=False, show_error=True)
