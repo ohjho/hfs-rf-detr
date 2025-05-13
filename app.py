@@ -48,7 +48,6 @@ VIDEO_TARGET_DIRECTORY = "tmp"
 
 create_directory(directory_path=VIDEO_TARGET_DIRECTORY)
 
-@spaces.GPU
 def detect_and_annotate(
         model: RFDETR,
         image: ImageType,
@@ -86,7 +85,7 @@ def detect_and_annotate(
     annotated_image = label_annotator.annotate(annotated_image, detections, labels)
     return {'annotated_image': annotated_image, 
         'results': detection_results}
-
+        
 @spaces.GPU
 def load_model(resolution: int, checkpoint: str) -> RFDETR:
     if checkpoint == "base":
