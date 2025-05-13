@@ -31,10 +31,8 @@ IMAGE_PROCESSING_EXAMPLES = [
     ['https://media.roboflow.com/supervision/image-examples/vehicles.png', 0.3, 728, "large"],
     ['https://media.roboflow.com/notebooks/examples/dog-2.jpeg', 0.5, 560, "base"],
 ]
-VIDEO_PROCESSING_EXAMPLES = [
-    ["videos/people-walking.mp4", 0.3, 728, "large"],
-    ["videos/vehicles.mp4", 0.3, 728, "large"],
-]
+VIDEO_PROCESSING_EXAMPLES = [["https://media.roboflow.com/supervision/video-examples/people-walking.mp4", 0.3, 728, "large"], ["https://media.roboflow.com/supervision/video-examples/vehicles.mp4", 0.3, 728, "large"]]
+
 
 COLOR = sv.ColorPalette.from_hex([
     "#ffff00", "#ff9b00", "#ff8080", "#ff66b2", "#ff66ff", "#b266ff",
@@ -67,7 +65,7 @@ def detect_and_annotate(
     )
 
     labels = [
- f"{COCO_CLASSES[class_id]} {confidence:.2f}"
+         f"{COCO_CLASSES[class_id]} {confidence:.2f}"
         for class_id, confidence
         in zip(detections.class_id, detections.confidence)
     ]
@@ -75,15 +73,15 @@ def detect_and_annotate(
     detection_results = []
     for i in range(len(detections.class_id)):
         detection_results.append({
- "class_id": detections.class_id[i],
- "classname": COCO_CLASSES[detections.class_id[i]],
- "confidence": detections.confidence[i],
- "bounding_box": detections.xyxy[i].tolist()
+         "class_id": detections.class_id[i],
+         "classname": COCO_CLASSES[detections.class_id[i]],
+         "confidence": detections.confidence[i],
+         "bounding_box": detections.xyxy[i].tolist()
         })
     annotated_image = image.copy()
     annotated_image = bbox_annotator.annotate(annotated_image, detections)
     annotated_image = label_annotator.annotate(annotated_image, detections, labels)
- return annotated_image, detection_results
+    return annotated_image, detection_results
 
 
 def load_model(resolution: int, checkpoint: str) -> RFDETR:
