@@ -94,7 +94,7 @@ def load_model(resolution: int, checkpoint: str) -> RFDETR:
         return RFDETRLarge(resolution=resolution, device = "cpu")
     raise TypeError("Checkpoint must be a base or large.")
 
-
+@spaces.GPU
 def image_processing_inference(
         input_image: Image.Image,
         confidence: float,
@@ -102,7 +102,8 @@ def image_processing_inference(
         checkpoint: str
 ) -> Image.Image:
     model = load_model(resolution=resolution, checkpoint=checkpoint)
-    return detect_and_annotate(model=model.to('cuda'), image=input_image, confidence=confidence)['annotated_image']
+    model.model.device = 'cuda'
+    return detect_and_annotate(model=model, image=input_image, confidence=confidence)['annotated_image']
 
 
 def video_processing_inference(
