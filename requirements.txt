@@ -1,5 +1,5 @@
 gradio==5.23.2
 pydantic==2.10.6
 spaces
-rfdetr~=1.10
+rfdetr~=1.1.0
 tqdm
