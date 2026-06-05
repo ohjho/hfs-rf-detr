@@ -86,14 +86,20 @@ def detect_and_annotate(
     return {'annotated_image': annotated_image, 
         'results': detection_results}
 
+def _snap(resolution: int, divisor: int) -> int:
+    # Each checkpoint's DINOv2 backbone asserts the input be divisible by a fixed
+    # block size (base -> 56, large -> 32); snap to the nearest valid multiple so the
+    # slider can't feed an unsupported resolution into the model.
+    return max(divisor, round(resolution / divisor) * divisor)
+
 @spaces.GPU
 def load_model(resolution: int, checkpoint: str) -> RFDETR:
     # Huggingface Zero-GPU has to use .to(device) to set the device, otherwise it will fail
     # ref: https://huggingface.co/spaces/zero-gpu-explorers/README/discussions/72#669ffc12b3b73c95ecd9c246
     if checkpoint == "base":
-        return RFDETRBase(resolution=resolution, device = "cpu")
+        return RFDETRBase(resolution=_snap(resolution, 56), device = "cpu")
     elif checkpoint == "large":
-        return RFDETRLarge(resolution=resolution, device = "cpu")
+        return RFDETRLarge(resolution=_snap(resolution, 32), device = "cpu")
     raise TypeError("Checkpoint must be a base or large.")
 
 @spaces.GPU
